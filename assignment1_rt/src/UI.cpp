@@ -10,18 +10,33 @@ class UI: public rclcpp::Node{
         publisher1_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle1/cmd_vel", 10);
         publisher2_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle2/cmd_vel", 10);
         timer_ = this->create_wall_timer(std::chrono::milliseconds(50), std::bind(&UI::timer_callback, this));
+        flag = 0;
+        counter = 20;
     }
-    void input()
+    
+    private:
+    void timer_callback()
     {
-        while(rclcpp::ok()){
-            int turtle;
-            double linear_v, angular_v;
-            
+        int turtle = 0;
+        double linear_v, angular_v;
+
+        if (flag == 1 && counter >= 20){
+            message_.linear.x = 0;
+            message_.angular.z = 0;
+
+            if (turtle == 1)
+                publisher1_->publish(message_);
+            else if (turtle == 2)
+                publisher2_->publish(message_);
+            flag = 0;
+        }
+
+        if (flag == 0 && counter>=20){ 
             while(turtle != 1 && turtle != 2){
                 std::cout << "Press 1 or 2 to select a turtle";
                 std::cin >> turtle;
                 if (turtle != 1 && turtle != 2){
-                    std::cout << "Not a valid turtle! insert 1 or 2.\n"
+                    std::cout << "Not a valid turtle! insert 1 or 2.\n";
                 }
             }
 
@@ -32,7 +47,7 @@ class UI: public rclcpp::Node{
                 if (std::cin.fail()){
                     std::cin.clear();
                     std::cin.ignore(1000, '\n');
-                    std::cout <<"Not a valid input! Insert a number.\n"
+                    std::cout <<"Not a valid input! Insert a number.\n";
                 } else break;
             }
 
@@ -43,21 +58,31 @@ class UI: public rclcpp::Node{
                 if (std::cin.fail()){
                     std::cin.clear();
                     std::cin.ignore(1000, '\n');
-                    std::cout <<"Not a valid input! Insert a number.\n"
+                    std::cout <<"Not a valid input! Insert a number.\n";
                 } else break;
             }
 
+            message_.linear.x = linear_v;
+            message_.angular.z = angular_v;
+
+            if (turtle == 1)
+                publisher1_->publish(message_);
+            else if (turtle == 2)
+                publisher2_->publish(message_);
             
-
+            flag = 1;
+            counter = 0;
         }
-    }
-    
-    private:
-    void timer_callback()
-    {
+        if (flag == 1)
+            counter++;
 
     }
-}
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher1_;
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher2_;
+    rclcpp::TimerBase::SharedPtr timer_;
+    geometry_msgs::msg::Twist message_;
+    int flag, counter;
+};
 
 
 int main(int argc, char * argv[])
