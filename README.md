@@ -47,7 +47,7 @@ Numerical input for linear and angular velocities
 
 The cycle repeats indefinitely, allowing the user to update commands in real time.
 
-📏 3. Distance Node
+3. Distance Node
 
 The distance_node implements position checks by monitoring:
 
