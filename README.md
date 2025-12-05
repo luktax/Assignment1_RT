@@ -1,3 +1,12 @@
+HOW TO EXECUTE
+To execute the program 4 terminals are needed, in each one we run the corresponding node, in the following sequence:
+-ros2 run turtlesim turtlesim_node
+-ros2 run turtle_spawn turtle_spawn
+
+-ros2 run UI UI
+-ros2 run Distance Distance
+
+DESCRIPTION
 This project implements a ROS2 workflow that manages two turtles in Turtlesim using three custom nodes:
 
 spawn_turtle – spawns a second turtle
